@@ -1,3 +1,14 @@
+/**
+ * Copyright (c) 2025 TAURUS AI Corp
+ * All rights reserved.
+ *
+ * This software is subject to pending patent applications.
+ * See LICENSE file for details.
+ *
+ * Trademark Notice: QUANTUM_RUPEE, QUANTUM_RUPEE (Q₹), Q₹ are trademarks of TAURUS AI Corp.
+ * See TRADEMARK.md for usage guidelines.
+ */
+
 // Navigation Smooth Scroll
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {

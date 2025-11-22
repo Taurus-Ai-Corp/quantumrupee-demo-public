@@ -144,14 +144,16 @@ Edit `script.js` for interactive features
 
 ## 📝 License
 
-Apache 2.0 (Public Demo)
+MIT License (Public Demo)
+
+See [LICENSE](LICENSE) file for full details.
 
 ---
 
 ## 🔗 Links
 
-- **Live Demo:** [Deploy and add URL]
-- **GitHub:** https://github.com/quantumrupee/demo-public
+- **Live Demo:** https://taurus-ai-corp.github.io/quantumrupee-demo-public/
+- **GitHub Repository:** https://github.com/Taurus-Ai-Corp/quantumrupee-demo-public
 - **Documentation:** [Link to docs]
 - **Contact:** contact@quantumrupee.in
 
