@@ -1,16 +1,54 @@
 {
   "version": 2,
+  "name": "quantumrupee-demo",
   "builds": [
     {
+      "src": "backend/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
       "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "videos/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "backend/server.js",
+      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "X-Requested-With, Content-Type, Accept, Authorization"
+      }
+    },
+    {
+      "src": "/videos/(.*)",
+      "dest": "/videos/$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|mp4))",
+      "dest": "/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "regions": ["bom1", "iad1"],
+  "github": {
+    "enabled": true,
+    "autoAlias": true,
+    "silent": false
+  }
 }
-
