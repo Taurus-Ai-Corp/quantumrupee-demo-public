@@ -1,41 +1,27 @@
 # Dependencies
 node_modules/
-package-lock.json
+backend/node_modules/
 
-# Environment variables
+# Environment
 .env
 .env.local
-.env.*.local
+*.log
+
+# Build
+dist/
+build/
+_site/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Build
-dist/
-build/
-*.log
-
-# Temporary files
-tmp/
-temp/
+# Temporary
 *.tmp
-
-# Secrets (should not be in public repo)
-secrets/
-*.key
-*.pem
-*.p12
-credentials.json
-
-# API Keys (if any)
-config/api-keys.js
-config/secrets.js
-
+temp/
