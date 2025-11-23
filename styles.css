@@ -953,6 +953,117 @@ body {
     padding: 2rem;
 }
 
+/* Video Demos */
+.demo-video {
+    margin: 3rem 0;
+    background: var(--white);
+    padding: 2.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border-left: 4px solid var(--primary-color);
+}
+
+.demo-video h3 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: var(--dark);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.demo-video-player {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    display: block;
+    margin: 0 auto 1.5rem;
+    background: #000;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.demo-video-player:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+}
+
+.demo-video-player:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 4px;
+}
+
+.video-caption {
+    color: var(--gray);
+    line-height: 1.8;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+    background: var(--light);
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+.video-caption strong {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* Video loading state */
+.demo-video-player:not([src]):not([srcset]) {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Responsive video styles */
+@media (max-width: 768px) {
+    .demo-video {
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .demo-video h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .demo-video-player {
+        max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .video-caption {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+    }
+}
+
+/* Video controls enhancement (optional custom controls) */
+.demo-video-player::-webkit-media-controls-panel {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7));
+}
+
+.demo-video-player::-webkit-media-controls-play-button,
+.demo-video-player::-webkit-media-controls-timeline,
+.demo-video-player::-webkit-media-controls-current-time-display,
+.demo-video-player::-webkit-media-controls-time-remaining-display,
+.demo-video-player::-webkit-media-controls-mute-button,
+.demo-video-player::-webkit-media-controls-volume-slider,
+.demo-video-player::-webkit-media-controls-fullscreen-button {
+    filter: brightness(1.2);
+}
+
 /* Footer */
 .footer {
     background: var(--dark);
