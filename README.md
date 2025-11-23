@@ -152,10 +152,10 @@ See [LICENSE](LICENSE) file for full details.
 
 ## 🔗 Links
 
-- **Live Demo:** https://taurus-ai-corp.github.io/quantumrupee-demo-public/
+- **Live Demo:** [https://taurus-ai-corp.github.io/quantumrupee-demo-public/](https://quantum-rupee-taurusai.replit.app)
 - **GitHub Repository:** https://github.com/Taurus-Ai-Corp/quantumrupee-demo-public
 - **Documentation:** [Link to docs]
-- **Contact:** contact@quantumrupee.in
+- **Contact:** contact@quantumrupee-taurusai.in
 
 ---
 
