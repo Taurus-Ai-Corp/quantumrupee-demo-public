@@ -70,13 +70,55 @@ async function initDatabase() {
             )
         `);
 
-        console.log('✅ Database tables initialized');
+        // Payment Transactions Table
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS payment_transactions (
+                id SERIAL PRIMARY KEY,
+                payment_id VARCHAR(64) UNIQUE NOT NULL,
+                user_id VARCHAR(100),
+                amount DECIMAL(18, 8) NOT NULL,
+                currency VARCHAR(10) NOT NULL,
+                transaction_hash VARCHAR(66),
+                blockchain_network VARCHAR(50) NOT NULL,
+                status VARCHAR(20) NOT NULL,
+                resource_accessed TEXT,
+                gas_fee DECIMAL(18, 8),
+                processing_fee DECIMAL(18, 8),
+                market_segment VARCHAR(50),
+                fee_discount DECIMAL(5, 2),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                verified_at TIMESTAMP,
+                settled_at TIMESTAMP
+            )
+        `);
+
+        // Payment Analytics Table
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS payment_analytics (
+                id SERIAL PRIMARY KEY,
+                date DATE NOT NULL,
+                total_payments INTEGER DEFAULT 0,
+                total_volume DECIMAL(18, 2) DEFAULT 0,
+                total_fees DECIMAL(18, 2) DEFAULT 0,
+                average_transaction DECIMAL(18, 2) DEFAULT 0,
+                market_segment VARCHAR(50),
+                UNIQUE(date, market_segment)
+            )
+        `);
+
+        console.log('✅ Database tables initialized (including payment infrastructure)');
     } catch (error) {
         console.error('❌ Database initialization error:', error.message);
     }
 }
 
+// Import Payment Routes
+const paymentRoutes = require('./routes/payment');
+
 // API Routes
+
+// Mount payment routes
+app.use('/api/payment', paymentRoutes);
 
 // Health Check
 app.get('/api/health', async (req, res) => {
