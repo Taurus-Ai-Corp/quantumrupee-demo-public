@@ -197,7 +197,13 @@ function loadDemo(type) {
                             e.target.value = '';
                         }
                     });
+                    terminalInput.focus();
                 }
+                
+                // Initialize terminal with welcome message
+                addTerminalOutput('🔐 QUANTUM_RUPEE (Q₹) KYC System');
+                addTerminalOutput('Type "help" for available commands');
+                addTerminalOutput('');
             }, 100);
             break;
         case 'zk-proofs':
@@ -343,7 +349,11 @@ function loadLiveDemo(type) {
 // Terminal-like output for KYC
 function addTerminalOutput(text, containerId = 'terminal-output') {
     const container = document.getElementById(containerId);
-    if (!container) return;
+    if (!container) {
+        // Fallback: try to create container or log to console
+        console.log('Terminal:', text);
+        return;
+    }
     
     const line = document.createElement('div');
     line.className = 'terminal-line';
@@ -363,11 +373,15 @@ function handleAadhaarInput(event) {
     const value = input.value.replace(/\D/g, ''); // Only numbers
     input.value = value;
     
+    const startBtn = document.getElementById('start-kyc-btn');
     if (value.length === 12) {
-        document.getElementById('start-kyc-btn').disabled = false;
-        addTerminalOutput(`✓ Aadhaar format valid: ${value.substring(0, 4)}****${value.substring(8)}`);
+        if (startBtn) startBtn.disabled = false;
+        const terminalOutput = document.getElementById('terminal-output');
+        if (terminalOutput) {
+            addTerminalOutput(`✓ Aadhaar format valid: ${value.substring(0, 4)}****${value.substring(8)}`);
+        }
     } else {
-        document.getElementById('start-kyc-btn').disabled = true;
+        if (startBtn) startBtn.disabled = value.length === 0 ? false : true;
     }
 }
 
@@ -399,12 +413,23 @@ function handleTerminalCommand(command) {
 
 async function startKYC() {
     const aadhaarInput = document.getElementById('aadhaar-input');
-    if (!aadhaarInput || aadhaarInput.value.length !== 12) {
-        addTerminalOutput('❌ Error: Please enter a valid 12-digit Aadhaar number');
+    if (!aadhaarInput) {
+        alert('Please enter a valid 12-digit Aadhaar number');
+        return;
+    }
+    
+    const aadhaar = aadhaarInput.value.replace(/\D/g, '');
+    
+    if (aadhaar.length !== 12) {
+        const terminalOutput = document.getElementById('terminal-output');
+        if (terminalOutput) {
+            addTerminalOutput('❌ Error: Please enter a valid 12-digit Aadhaar number');
+        } else {
+            alert('Please enter a valid 12-digit Aadhaar number');
+        }
         return;
     }
 
-    const aadhaar = aadhaarInput.value;
     kycData.aadhaar = aadhaar;
     
     // Show terminal output
@@ -414,10 +439,14 @@ async function startKYC() {
     
     // Disable input
     aadhaarInput.disabled = true;
-    document.getElementById('start-kyc-btn').disabled = true;
+    const startBtn = document.getElementById('start-kyc-btn');
+    if (startBtn) startBtn.disabled = true;
     
     // Show biometric auth
-    document.getElementById('biometric-auth').style.display = 'block';
+    const biometricAuth = document.getElementById('biometric-auth');
+    if (biometricAuth) {
+        biometricAuth.style.display = 'block';
+    }
     
     // Try API call, fallback to simulation
     try {
@@ -986,8 +1015,40 @@ document.querySelectorAll('.ps-card, .solution-card, .flow-step').forEach(el => 
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    loadDemo('kyc-flow');
-    loadLiveDemo('kyc');
+    // Initialize demo content
+    const demoContent = document.getElementById('demo-content');
+    const liveDemoContent = document.getElementById('live-demo-content');
+    
+    if (demoContent) {
+        loadDemo('kyc-flow');
+    }
+    
+    if (liveDemoContent) {
+        loadLiveDemo('kyc');
+    }
+    
+    // Re-initialize demo buttons after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        // Re-attach demo button handlers
+        document.querySelectorAll('.demo-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const demoType = this.getAttribute('data-demo');
+                loadDemo(demoType);
+            });
+        });
+        
+        // Re-attach live demo selectors
+        document.querySelectorAll('.demo-select-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.demo-select-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const demoType = this.getAttribute('data-demo');
+                loadLiveDemo(demoType);
+            });
+        });
+    }, 100);
     
     // Check API health
     fetch(`${API_URL}/health`)
@@ -995,3 +1056,17 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => console.log('✅ API Connected:', data))
         .catch(() => console.log('⚠️ Using offline mode'));
 });
+
+// Make functions globally available
+window.startKYC = startKYC;
+window.nextStep = nextStep;
+window.retryBiometric = retryBiometric;
+window.viewDetails = viewDetails;
+window.verifyCurrentStep = verifyCurrentStep;
+window.uploadDocument = uploadDocument;
+window.downloadCredential = downloadCredential;
+window.handleAadhaarInput = handleAadhaarInput;
+window.handleTerminalCommand = handleTerminalCommand;
+window.processOfflinePayment = processOfflinePayment;
+window.generateQRCode = generateQRCode;
+window.analyzeFile = analyzeFile;
