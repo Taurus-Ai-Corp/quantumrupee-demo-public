@@ -6,7 +6,7 @@
       "src": "backend/server.js",
       "use": "@vercel/node",
       "config": {
-        "maxDuration": 30
+        "maxDuration": 10
       }
     },
     {
@@ -45,7 +45,6 @@
   "env": {
     "NODE_ENV": "production"
   },
-  "regions": ["bom1", "iad1"],
   "github": {
     "enabled": true,
     "autoAlias": true,

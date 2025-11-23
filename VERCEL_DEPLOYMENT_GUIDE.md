@@ -132,7 +132,8 @@ For each variable:
       "dest": "/index.html"           // SPA routing
     }
   ],
-  "regions": ["bom1", "iad1"]        // Mumbai + US East
+  // Note: Multi-region deployment requires Pro/Enterprise tier
+  // Free tier auto-selects optimal region based on traffic
 }
 ```
 
@@ -141,8 +142,9 @@ For each variable:
 ✅ **Serverless Backend:**
 - Backend API runs as serverless functions
 - Auto-scaling based on traffic
-- 30-second max execution time
+- 10-second max execution time (Free tier)
 - Cold start: ~500ms (acceptable for demo)
+- Note: Pro tier extends to 60 seconds
 
 ✅ **Static Frontend:**
 - Instant global CDN delivery
@@ -155,10 +157,11 @@ For each variable:
 - `/` routes → Static HTML/CSS/JS
 - `/videos/*` → CDN-served video files
 
-✅ **Multi-Region:**
-- Primary: Mumbai (`bom1`) for India traffic
-- Secondary: US East (`iad1`) for global access
-- Automatic failover and load balancing
+✅ **Automatic Region Selection (Free Tier):**
+- Vercel automatically selects optimal region
+- Edge network provides global coverage
+- CDN caching reduces latency worldwide
+- **Note:** Multi-region deployment requires Pro/Enterprise tier
 
 ---
 
@@ -280,18 +283,22 @@ Expected:
 ⚠️ **Limitations:**
 - 1 team member
 - 12 MB max function size
-- 10 second max execution time (free tier)
+- **10 second max execution time** (increased to 60s on Pro)
 - 1 concurrent build
+- **Single region deployment** (multi-region requires Pro/Enterprise)
+- Automatic region selection by Vercel
 
 ### Vercel Pro Tier ($20/month)
 
 ✅ **Additional:**
 - 1 TB bandwidth
 - 1000 GB-hours execution
-- 60 second max execution
+- **60 second max execution** (vs 10s on Free)
+- **Multi-region deployment** (Mumbai, US, Europe, etc.)
 - Team collaboration
 - Advanced analytics
 - Priority support
+- Custom domains with SSL
 
 ### Estimated Usage (RBI Hackathon Demo)
 
