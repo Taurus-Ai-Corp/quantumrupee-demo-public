@@ -11,10 +11,6 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   deploy:
     environment:
@@ -33,6 +29,7 @@ jobs:
           echo "Building static site..."
           mkdir -p _site
           cp -r *.html *.css *.js videos _site/ 2>/dev/null || true
+          echo "Build complete"
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

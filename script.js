@@ -78,50 +78,127 @@ function loadDemo(type) {
                         <div class="phone-content">
                             <div class="terminal-container" id="terminal-container">
                                 <div class="terminal-output" id="terminal-output"></div>
-                                <div class="terminal-input-line">
+                                <div class="terminal-input-line" id="terminal-input-line">
                                     <span class="terminal-prompt">Q₹></span>
+                                    <input type="text" class="terminal-input" id="terminal-input" autocomplete="off" style="background: transparent; border: none; color: #00ff00; outline: none; flex: 1; font-family: monospace;">
                                     <span class="terminal-cursor">█</span>
                                 </div>
                             </div>
                             <div class="kyc-step active" id="step-1">
                                 <h4>Step 1: Aadhaar Authentication</h4>
                                 <div class="aadhaar-input">
-                                    <input type="text" placeholder="Enter Aadhaar Number" maxlength="12" id="aadhaar-input" pattern="[0-9]{12}">
-                                    <button class="btn btn-primary" onclick="startKYC()">Start KYC</button>
+                                    <input type="text" placeholder="Enter 12-digit Aadhaar Number" maxlength="12" id="aadhaar-input" pattern="[0-9]{12}" onkeypress="handleAadhaarInput(event)">
+                                    <button class="btn btn-primary" onclick="startKYC()" id="start-kyc-btn">
+                                        <i class="fas fa-play"></i> Start KYC
+                                    </button>
                                 </div>
                                 <div class="biometric-auth" id="biometric-auth" style="display: none;">
-                                    <i class="fas fa-fingerprint"></i>
-                                    <p>Place finger on sensor</p>
+                                    <i class="fas fa-fingerprint" id="fingerprint-icon"></i>
+                                    <p id="biometric-message">Place finger on sensor</p>
                                     <div class="progress-bar">
                                         <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
                                     </div>
+                                    <button class="btn btn-outline" onclick="retryBiometric()" id="retry-biometric" style="display: none; margin-top: 1rem;">
+                                        <i class="fas fa-redo"></i> Retry
+                                    </button>
                                 </div>
-                                <button class="btn btn-secondary" id="next-btn-1" onclick="nextStep(2)" style="display: none; margin-top: 1rem;">
-                                    Next Step →
-                                </button>
+                                <div class="kyc-actions" id="step1-actions" style="display: none; margin-top: 1rem;">
+                                    <button class="btn btn-secondary" id="next-btn-1" onclick="nextStep(2)">
+                                        <i class="fas fa-arrow-right"></i> Next Step →
+                                    </button>
+                                    <button class="btn btn-outline" onclick="viewDetails()" style="margin-left: 0.5rem;">
+                                        <i class="fas fa-info-circle"></i> View Details
+                                    </button>
+                                </div>
                             </div>
                             <div class="kyc-step" id="step-2" style="display: none;">
-                                <h4>Step 2: ZK Proof Generation</h4>
+                                <h4>Step 2: Document Verification & ZK Proof Generation</h4>
+                                <div class="document-upload" id="document-upload" style="display: none;">
+                                    <p>Upload supporting documents:</p>
+                                    <div class="doc-options">
+                                        <button class="btn btn-outline" onclick="uploadDocument('PAN')">
+                                            <i class="fas fa-id-card"></i> PAN Card
+                                        </button>
+                                        <button class="btn btn-outline" onclick="uploadDocument('Address')">
+                                            <i class="fas fa-home"></i> Address Proof
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="terminal-output" id="zk-terminal"></div>
                                 <div class="progress-bar">
                                     <div class="progress-fill" id="zk-progress" style="width: 0%"></div>
                                 </div>
-                                <button class="btn btn-secondary" id="next-btn-2" onclick="nextStep(3)" style="display: none; margin-top: 1rem;">
-                                    Next Step →
-                                </button>
+                                <div class="zk-proofs-display" id="zk-proofs-display" style="display: none; margin-top: 1rem;">
+                                    <div class="proof-item">
+                                        <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+                                        <span>Age Proof: ≥18 (ZK-SNARK)</span>
+                                    </div>
+                                    <div class="proof-item">
+                                        <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+                                        <span>Location Proof: Maharashtra (ZK-SNARK)</span>
+                                    </div>
+                                </div>
+                                <div class="kyc-actions" id="step2-actions" style="display: none; margin-top: 1rem;">
+                                    <button class="btn btn-secondary" id="next-btn-2" onclick="nextStep(3)">
+                                        <i class="fas fa-arrow-right"></i> Next Step →
+                                    </button>
+                                </div>
                             </div>
                             <div class="kyc-step" id="step-3" style="display: none;">
-                                <h4>Step 3: Credential Issued</h4>
-                                <div class="success-message">
+                                <h4>Step 3: Blockchain Verification & Credential Issuance</h4>
+                                <div class="terminal-output" id="blockchain-terminal"></div>
+                                <div class="verification-status" id="verification-status" style="display: none;">
+                                    <div class="status-item">
+                                        <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+                                        <span>Hedera Hashgraph: Verified</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+                                        <span>W3C Credential: Issued</span>
+                                    </div>
+                                    <div class="status-item">
+                                        <i class="fas fa-check-circle" style="color: var(--success-color);"></i>
+                                        <span>IPFS Storage: Stored</span>
+                                    </div>
+                                </div>
+                                <div class="success-message" id="success-message" style="display: none;">
                                     <i class="fas fa-check-circle" style="color: var(--success-color); font-size: 3rem;"></i>
                                     <p>KYC Token Created Successfully!</p>
-                                    <p style="font-size: 0.9rem; color: var(--gray);">Time: 87 seconds | Cost: ₹15</p>
+                                    <div class="kyc-stats">
+                                        <div class="stat-item">
+                                            <span class="stat-label">Time:</span>
+                                            <span class="stat-value" id="kyc-time">87 seconds</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Cost:</span>
+                                            <span class="stat-value" id="kyc-cost">₹15</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <span class="stat-label">Token ID:</span>
+                                            <span class="stat-value" id="token-id">--</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary" onclick="downloadCredential()" style="margin-top: 1rem;">
+                                        <i class="fas fa-download"></i> Download Credential
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
+            // Initialize terminal input handler
+            setTimeout(() => {
+                const terminalInput = document.getElementById('terminal-input');
+                if (terminalInput) {
+                    terminalInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            handleTerminalCommand(e.target.value);
+                            e.target.value = '';
+                        }
+                    });
+                }
+            }, 100);
             break;
         case 'zk-proofs':
             demoContent.innerHTML = `
@@ -275,84 +352,263 @@ function addTerminalOutput(text, containerId = 'terminal-output') {
     container.scrollTop = container.scrollHeight;
 }
 
-// KYC Flow with Terminal Animation
+// KYC Flow with Enhanced Terminal Animation
 let kycTransactionId = null;
+let kycStep = 1;
+let kycData = {};
+
+// Handle Aadhaar input validation
+function handleAadhaarInput(event) {
+    const input = event.target;
+    const value = input.value.replace(/\D/g, ''); // Only numbers
+    input.value = value;
+    
+    if (value.length === 12) {
+        document.getElementById('start-kyc-btn').disabled = false;
+        addTerminalOutput(`✓ Aadhaar format valid: ${value.substring(0, 4)}****${value.substring(8)}`);
+    } else {
+        document.getElementById('start-kyc-btn').disabled = true;
+    }
+}
+
+// Handle terminal commands
+function handleTerminalCommand(command) {
+    if (!command.trim()) return;
+    
+    addTerminalOutput(`Q₹> ${command}`);
+    
+    const cmd = command.toLowerCase().trim();
+    
+    if (cmd === 'help' || cmd === 'h') {
+        addTerminalOutput('Available commands:');
+        addTerminalOutput('  status - Check KYC status');
+        addTerminalOutput('  details - View transaction details');
+        addTerminalOutput('  verify - Verify current step');
+        addTerminalOutput('  help - Show this help');
+    } else if (cmd === 'status') {
+        addTerminalOutput(`Current Step: ${kycStep}`);
+        addTerminalOutput(`Transaction ID: ${kycTransactionId || 'Not started'}`);
+    } else if (cmd === 'details') {
+        viewDetails();
+    } else if (cmd === 'verify') {
+        verifyCurrentStep();
+    } else {
+        addTerminalOutput(`Unknown command: ${command}. Type 'help' for available commands.`);
+    }
+}
 
 async function startKYC() {
     const aadhaarInput = document.getElementById('aadhaar-input');
     if (!aadhaarInput || aadhaarInput.value.length !== 12) {
-        alert('Please enter a valid 12-digit Aadhaar number');
+        addTerminalOutput('❌ Error: Please enter a valid 12-digit Aadhaar number');
         return;
     }
 
     const aadhaar = aadhaarInput.value;
+    kycData.aadhaar = aadhaar;
     
     // Show terminal output
     addTerminalOutput('🔐 Starting KYC Process...');
     addTerminalOutput(`📱 Aadhaar: ${aadhaar.substring(0, 4)}****${aadhaar.substring(8)}`);
+    addTerminalOutput('🔗 Connecting to UIDAI servers...');
+    
+    // Disable input
+    aadhaarInput.disabled = true;
+    document.getElementById('start-kyc-btn').disabled = true;
     
     // Show biometric auth
     document.getElementById('biometric-auth').style.display = 'block';
     
     // Try API call, fallback to simulation
     try {
+        addTerminalOutput('🌐 Connecting to backend API...');
         const response = await fetch(`${API_URL}/kyc/start`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ aadhaar })
         });
+        
+        if (!response.ok) throw new Error('API error');
+        
         const data = await response.json();
         kycTransactionId = data.transactionId;
+        kycData.transactionId = kycTransactionId;
         addTerminalOutput(`✅ Transaction ID: ${kycTransactionId}`);
+        addTerminalOutput(`📊 Status: ${data.status || 'started'}`);
+        addTerminalOutput('💾 Data saved to Neon database');
     } catch (error) {
         kycTransactionId = Date.now();
-        addTerminalOutput('⚠️ Using offline mode');
+        kycData.transactionId = kycTransactionId;
+        addTerminalOutput('⚠️ Backend unavailable - Using offline mode');
+        addTerminalOutput(`📝 Local Transaction ID: ${kycTransactionId}`);
     }
     
+    setTimeout(() => {
+        simulateBiometric();
+    }, 1000);
+}
+
+function retryBiometric() {
+    document.getElementById('retry-biometric').style.display = 'none';
+    document.getElementById('progress-fill').style.width = '0%';
+    addTerminalOutput('🔄 Retrying biometric authentication...');
     simulateBiometric();
 }
 
 function simulateBiometric() {
     const progressFill = document.getElementById('progress-fill');
+    const fingerprintIcon = document.getElementById('fingerprint-icon');
+    const biometricMessage = document.getElementById('biometric-message');
     let progress = 0;
+    let attempts = 0;
     
     addTerminalOutput('👆 Biometric authentication in progress...');
+    addTerminalOutput('📱 Place your finger on the sensor');
     
     const interval = setInterval(() => {
-        progress += 10;
+        progress += 5;
         if (progressFill) progressFill.style.width = progress + '%';
         
-        if (progress % 30 === 0) {
+        // Simulate fingerprint reading stages
+        if (progress === 25) {
+            addTerminalOutput('🔍 Scanning fingerprint...');
+            fingerprintIcon.style.animation = 'pulse 1s infinite';
+        } else if (progress === 50) {
+            addTerminalOutput('🔐 Matching against Aadhaar database...');
+            biometricMessage.textContent = 'Matching fingerprint...';
+        } else if (progress === 75) {
+            addTerminalOutput('✅ Fingerprint matched!');
+            biometricMessage.textContent = 'Fingerprint verified';
+            fingerprintIcon.style.color = 'var(--success-color)';
+        } else if (progress % 20 === 0 && progress < 100) {
             addTerminalOutput(`⏳ Progress: ${progress}%`);
         }
         
         if (progress >= 100) {
             clearInterval(interval);
-            addTerminalOutput('✅ Biometric verified');
+            fingerprintIcon.style.animation = 'none';
+            addTerminalOutput('✅ Biometric verified successfully');
             addTerminalOutput('🔐 Generating secure hash...');
             
+            // Simulate hash generation
             setTimeout(() => {
-                document.getElementById('next-btn-1').style.display = 'block';
-                addTerminalOutput('✅ Step 1 Complete - Ready for next step');
-            }, 500);
+                const hash = '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
+                addTerminalOutput(`🔑 Hash: ${hash.substring(0, 20)}...`);
+                addTerminalOutput('💾 Storing encrypted data...');
+                
+                // Save step 1 data
+                kycData.step1 = {
+                    aadhaarHash: hash,
+                    biometricVerified: true,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Update backend
+                updateKYCStep(1, 'completed');
+                
+                setTimeout(() => {
+                    document.getElementById('step1-actions').style.display = 'block';
+                    addTerminalOutput('✅ Step 1 Complete - Ready for next step');
+                    addTerminalOutput('💡 Type "help" for available commands');
+                }, 500);
+            }, 1000);
         }
-    }, 200);
+    }, 150);
+}
+
+// Update KYC step in backend
+async function updateKYCStep(step, status) {
+    if (!kycTransactionId) return;
+    
+    try {
+        await fetch(`${API_URL}/kyc/step`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                transactionId: kycTransactionId,
+                step: step,
+                status: status
+            })
+        });
+    } catch (error) {
+        // Silent fail - offline mode
+    }
+}
+
+function viewDetails() {
+    addTerminalOutput('📋 KYC Transaction Details:');
+    addTerminalOutput(`  Transaction ID: ${kycTransactionId}`);
+    addTerminalOutput(`  Current Step: ${kycStep}`);
+    addTerminalOutput(`  Aadhaar: ${kycData.aadhaar ? kycData.aadhaar.substring(0, 4) + '****' + kycData.aadhaar.substring(8) : 'N/A'}`);
+    if (kycData.step1) {
+        addTerminalOutput(`  Biometric: Verified`);
+        addTerminalOutput(`  Hash: ${kycData.step1.aadhaarHash.substring(0, 20)}...`);
+    }
+}
+
+function verifyCurrentStep() {
+    addTerminalOutput(`🔍 Verifying Step ${kycStep}...`);
+    if (kycStep === 1 && kycData.step1) {
+        addTerminalOutput('✅ Step 1 verified: Biometric authentication complete');
+    } else if (kycStep === 2 && kycData.step2) {
+        addTerminalOutput('✅ Step 2 verified: ZK proofs generated');
+    } else {
+        addTerminalOutput('⚠️ Step not yet completed');
+    }
 }
 
 function nextStep(stepNumber) {
+    kycStep = stepNumber;
+    
     if (stepNumber === 2) {
+        document.getElementById('step-1').classList.remove('active');
         document.getElementById('step-1').style.display = 'none';
         document.getElementById('step-2').style.display = 'block';
+        document.getElementById('step-2').classList.add('active');
+        
+        addTerminalOutput('🚀 Moving to Step 2: Document Verification & ZK Proof Generation');
+        addTerminalOutput('📄 Preparing document verification...');
         
         const zkTerminal = document.getElementById('zk-terminal');
         if (zkTerminal) {
             zkTerminal.innerHTML = '';
-            simulateZKProofs();
+            setTimeout(() => {
+                simulateZKProofs();
+            }, 500);
         }
+        
+        // Show document upload option
+        setTimeout(() => {
+            document.getElementById('document-upload').style.display = 'block';
+        }, 1000);
+        
+        updateKYCStep(2, 'started');
     } else if (stepNumber === 3) {
+        document.getElementById('step-2').classList.remove('active');
         document.getElementById('step-2').style.display = 'none';
         document.getElementById('step-3').style.display = 'block';
+        document.getElementById('step-3').classList.add('active');
+        
+        addTerminalOutput('🚀 Moving to Step 3: Blockchain Verification & Credential Issuance');
+        simulateBlockchainVerification();
+        
+        updateKYCStep(3, 'started');
     }
+}
+
+function uploadDocument(type) {
+    addTerminalOutput(`📤 Uploading ${type} document...`);
+    addTerminalOutput(`✅ ${type} document verified`);
+    
+    if (!kycData.documents) kycData.documents = [];
+    kycData.documents.push(type);
+    
+    // Update UI
+    const btn = event.target.closest('button');
+    btn.innerHTML = `<i class="fas fa-check-circle"></i> ${type} ✓`;
+    btn.disabled = true;
+    btn.style.background = 'var(--success-color)';
+    btn.style.color = 'white';
 }
 
 function simulateZKProofs() {
@@ -362,9 +618,12 @@ function simulateZKProofs() {
     
     const messages = [
         '🔐 Initializing ZK-SNARK circuit...',
-        '📊 Generating age proof (≥18)...',
-        '📍 Generating location proof (Maharashtra)...',
-        '🔒 Encrypting sensitive data...',
+        '📊 Extracting age from DOB...',
+        '🔒 Generating age proof (≥18) without revealing DOB...',
+        '📍 Extracting location from address...',
+        '🔒 Generating location proof (Maharashtra) without revealing address...',
+        '🔐 Combining proofs into single ZK credential...',
+        '💾 Storing proofs on IPFS...',
         '✅ ZK proofs generated successfully'
     ];
     
@@ -375,14 +634,119 @@ function simulateZKProofs() {
             messageIndex++;
         }
         
-        progress += 20;
+        progress += 12.5;
         if (zkProgress) zkProgress.style.width = progress + '%';
         
         if (progress >= 100) {
             clearInterval(messageInterval);
-            document.getElementById('next-btn-2').style.display = 'block';
+            
+            // Save step 2 data
+            kycData.step2 = {
+                zkProofs: {
+                    age: '0x9a8b7c6d...',
+                    location: '0x1a2b3c4d...'
+                },
+                ipfsHash: 'QmXyZ123...',
+                timestamp: new Date().toISOString()
+            };
+            
+            // Show proofs
+            document.getElementById('zk-proofs-display').style.display = 'block';
+            addTerminalOutput('✅ Age Proof: 0x9a8b7c6d...', 'zk-terminal');
+            addTerminalOutput('✅ Location Proof: 0x1a2b3c4d...', 'zk-terminal');
+            addTerminalOutput('📦 IPFS Hash: QmXyZ123...', 'zk-terminal');
+            
+            updateKYCStep(2, 'completed');
+            
+            setTimeout(() => {
+                document.getElementById('step2-actions').style.display = 'block';
+            }, 500);
         }
-    }, 800);
+    }, 600);
+}
+
+function simulateBlockchainVerification() {
+    const blockchainTerminal = document.getElementById('blockchain-terminal');
+    let step = 0;
+    
+    const steps = [
+        { msg: '🔗 Connecting to Hedera Hashgraph...', delay: 500 },
+        { msg: '📝 Creating transaction...', delay: 800 },
+        { msg: '⏳ Waiting for consensus...', delay: 1000 },
+        { msg: '✅ Transaction confirmed (3.2s)', delay: 800 },
+        { msg: '📄 Generating W3C Verifiable Credential...', delay: 600 },
+        { msg: '💾 Storing credential on IPFS...', delay: 800 },
+        { msg: '🔐 Signing with quantum-ready cryptography...', delay: 600 },
+        { msg: '✅ Credential issued successfully!', delay: 500 }
+    ];
+    
+    function runStep() {
+        if (step < steps.length) {
+            addTerminalOutput(steps[step].msg, 'blockchain-terminal');
+            step++;
+            setTimeout(runStep, steps[step - 1].delay);
+        } else {
+            // Show verification status
+            document.getElementById('verification-status').style.display = 'block';
+            
+            // Generate token ID
+            const tokenId = 'Q₹-' + Date.now().toString(36).toUpperCase();
+            kycData.tokenId = tokenId;
+            kycData.step3 = {
+                tokenId: tokenId,
+                hederaHash: '0x' + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join(''),
+                ipfsHash: 'Qm' + Array.from({length: 44}, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random() * 62)]).join(''),
+                timestamp: new Date().toISOString()
+            };
+            
+            updateKYCStep(3, 'completed');
+            
+            // Show success message
+            setTimeout(() => {
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('token-id').textContent = tokenId;
+                document.getElementById('kyc-time').textContent = '87 seconds';
+                document.getElementById('kyc-cost').textContent = '₹15';
+                
+                addTerminalOutput(`🎉 KYC Complete! Token ID: ${tokenId}`, 'blockchain-terminal');
+                addTerminalOutput('💾 All data saved to Neon database', 'blockchain-terminal');
+            }, 500);
+        }
+    }
+    
+    runStep();
+}
+
+function downloadCredential() {
+    addTerminalOutput('📥 Downloading credential...');
+    
+    const credential = {
+        "@context": ["https://www.w3.org/2018/credentials/v1"],
+        "id": `https://quantumrupee.gov.in/credentials/kyc/${kycData.tokenId}`,
+        "type": ["VerifiableCredential", "KYCCredential"],
+        "issuer": "QUANTUM_RUPEE (Q₹)",
+        "issuanceDate": new Date().toISOString(),
+        "credentialSubject": {
+            "id": `did:hedera:${kycData.step1?.aadhaarHash}`,
+            "kycLevel": "FULL_KYC",
+            "zkProofs": kycData.step2?.zkProofs
+        },
+        "proof": {
+            "type": "EcdsaSecp256k1Signature2019",
+            "created": new Date().toISOString(),
+            "proofPurpose": "assertionMethod"
+        }
+    };
+    
+    const blob = new Blob([JSON.stringify(credential, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kyc-credential-${kycData.tokenId}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    
+    addTerminalOutput('✅ Credential downloaded successfully');
 }
 
 // Offline CBDC Functions
