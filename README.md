@@ -1,3 +1,9 @@
+<!-- TAURUS AI Badges -->
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/Taurus-Ai-Corp?style=flat-square&logo=github&color=EA4AAA)](https://github.com/sponsors/Taurus-Ai-Corp)
+[![License](https://img.shields.io/badge/License-FSL%201.1-blue?style=flat-square)](LICENSE)
+[![Website](https://img.shields.io/badge/Website-taurusai.io-green?style=flat-square)](https://taurusai.io)
+<!-- /TAURUS AI Badges -->
+
 # QUANTUM_RUPEE (Q₹) - Interactive Web Demo
 ## RBI Harbinger 2025 - Multi-Problem Statement Demo
 
@@ -162,4 +168,20 @@ See [LICENSE](LICENSE) file for full details.
 **Created:** November 22, 2025
 **Last Updated:** November 22, 2025
 **Version:** 1.0.0
+
+
+
+---
+
+## 💖 Support This Project
+
+If you find this project useful, please consider sponsoring:
+
+[![Sponsor TAURUS AI](https://img.shields.io/badge/Sponsor-TAURUS%20AI-EA4AAA?style=for-the-badge&logo=github-sponsors)](https://github.com/sponsors/Taurus-Ai-Corp)
+
+Your sponsorship helps us maintain and improve our open-source projects.
+
+---
+
+**TAURUS AI Corp** | [Website](https://taurusai.io) | [GitHub](https://github.com/Taurus-Ai-Corp) | [Contact](mailto:admin@taurusai.io)
 
